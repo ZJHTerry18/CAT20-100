@@ -24,11 +24,11 @@ program_name = "20-batch32-lr0.01-SGD"
 # unzip datafile
 import zipfile
 
-f = zipfile.ZipFile("./q1_data.zip", 'r')  # 原压缩文件在服务器的位置
+f = zipfile.ZipFile("./q1_data.zip", 'r')  
 
 for file in f.namelist():
 
-    f.extract(file, "./")  # 解压到的位置，./表示当前目录(与此.ipynb文件同一个目录)
+    f.extract(file, "./")  
 
 f.close()
 '''
@@ -119,26 +119,6 @@ test_data = test_data.reshape(len(test_data), 3, 32, 32)
 train_allcoarselabel = np.array(pd.read_csv('train1.csv'))
 train_allfinelabel = np.array(pd.read_csv('train2.csv'))
 
-'''
-# split train dataset by shuffle
-rseed = np.random.randint(1,100)
-np.random.seed(rseed)
-np.random.shuffle(train_alldata)
-np.random.seed(rseed)
-np.random.shuffle(train_allcoarselabel)
-np.random.seed(rseed)
-np.random.shuffle(train_allfinelabel)
-
-split_index = int(0.9*len(train_alldata))
-
-train_data = train_alldata[:split_index-1]
-train_coarselabel = train_allcoarselabel[:split_index-1]
-train_finelabel = train_allfinelabel[:split_index-1]
-valid_data = train_alldata[split_index:]
-valid_coarselabel = train_allcoarselabel[split_index:]
-valid_finelabel = train_allfinelabel[split_index:]
-'''
-
 # define data transformations
 
 train_transform = transforms.Compose([
@@ -192,45 +172,7 @@ print("Data loading finished")
 
 # 1.3 Net Building
 
-class Model(nn.Module):
-    # def __init__(self):
-    #     super(Model,self).__init__()
-    #     self.linear1 = nn.Linear(784,784)
-    #     self.linear2 = nn.Linear(784,10)
-    # def forward(self,X):
-    #     X = F.relu(self.linear1(X))
-    #     return F.relu(self.linear2(X))
-
-    # def __init__(self):
-    #     super(Model,self).__init__()
-    #     self.linear1 = nn.Linear(784,784)
-    #     self.linear2 = nn.Linear(784,784)
-    #     self.linear3 = nn.Linear(784,10)
-    # def forward(self,X):
-    #     X = F.relu(self.linear1(X))
-    #     X = F.relu(self.linear2(X))
-    #     return F.relu(self.linear3(X))
-
-    def __init__(self):
-        super(Model, self).__init__()
-        self.conv1 = nn.Conv2d(3, 10, kernel_size=5)
-        self.conv2 = nn.Conv2d(10, 20, kernel_size=5)
-        self.fc1 = nn.Linear(320, 50)
-        self.fc2 = nn.Linear(50, 10)
-
-    def forward(self, x):
-        x = F.relu(F.max_pool2d(self.conv1(x), 2))
-        x = F.relu(F.max_pool2d(self.conv2(x), 2))
-        print(x.shape)
-        x = x.view(-1, 320)
-        print(x.shape)
-        x = F.relu(self.fc1(x))
-        # x = F.dropout(x, training=self.training)
-        x = self.fc2(x)
-        return x
-
 # Resnet model: ResidualBlock, BottleNeck, ResNet
-
 
 class ResidualBlock(nn.Module):
     def __init__(self, inchannel, outchannel, stride=1):
